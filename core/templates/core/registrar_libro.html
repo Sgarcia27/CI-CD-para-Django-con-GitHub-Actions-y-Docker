@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f8f7f2">
+    <title>Registrar un libro | Biblioteca Aurora</title>
+    <style>
+        :root {
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #202c28;
+            background: #f8f7f2;
+            --green: #24483d;
+            --muted: #747b73;
+            --line: #e7e5dc;
+            --orange: #c87953;
+        }
+        * { box-sizing: border-box; }
+        body { min-height: 100vh; margin: 0; }
+        a { color: inherit; }
+        .page-shell { width: min(1050px, calc(100% - 48px)); margin: 0 auto; }
+        header {
+            display: flex;
+            min-height: 82px;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--line);
+        }
+        .brand {
+            color: var(--green);
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .header-link { color: #657168; font-size: 14px; text-decoration: none; }
+        .header-link:hover, .back-link:hover { color: var(--orange); }
+        main {
+            display: grid;
+            min-height: calc(100vh - 83px);
+            grid-template-columns: .85fr 1.15fr;
+            align-items: center;
+            gap: clamp(40px, 8vw, 100px);
+            padding: 70px 0;
+        }
+        .intro .eyebrow {
+            color: #9b6548;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+        h1 {
+            margin: 17px 0;
+            color: #203b32;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(42px, 5vw, 58px);
+            font-weight: 500;
+            letter-spacing: -1.8px;
+            line-height: 1.08;
+        }
+        .intro p { max-width: 360px; color: var(--muted); font-size: 15px; line-height: 1.8; }
+        .book-illustration {
+            position: relative;
+            display: grid;
+            min-height: 220px;
+            margin-top: 36px;
+            overflow: hidden;
+            place-items: center;
+            border-radius: 14px;
+            background: #e9eee7;
+        }
+        .book-shape {
+            display: flex;
+            width: 105px;
+            height: 145px;
+            align-items: center;
+            justify-content: center;
+            border: 5px solid #f8f4e9;
+            border-radius: 4px 10px 10px 4px;
+            background: #34594a;
+            box-shadow: 12px 15px 24px #223b3026;
+            color: #f8f4e9;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 20px;
+        }
+        .form-card {
+            padding: clamp(26px, 5vw, 46px);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: #fff;
+            box-shadow: 0 18px 50px #1720330b;
+        }
+        .form-card h2 {
+            margin: 0 0 7px;
+            color: #203b32;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 28px;
+            font-weight: 500;
+        }
+        .form-hint { margin: 0 0 28px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+        .field { margin-top: 20px; }
+        label { display: block; margin-bottom: 8px; color: #34473d; font-size: 13px; font-weight: 650; }
+        input {
+            width: 100%;
+            min-height: 48px;
+            padding: 0 13px;
+            border: 1px solid #d9ded7;
+            border-radius: 7px;
+            outline: none;
+            background: #fdfdfb;
+            color: #202c28;
+            font: inherit;
+            font-size: 14px;
+        }
+        input:focus { border-color: #668576; box-shadow: 0 0 0 3px #24483d18; }
+        input[aria-invalid="true"] { border-color: #bf5149; }
+        .error { margin: 7px 0 0; color: #a13c36; font-size: 12px; }
+        .help { margin: 7px 0 0; color: #858b83; font-size: 12px; }
+        .submit {
+            display: flex;
+            width: 100%;
+            min-height: 49px;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            margin-top: 28px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--green);
+            color: white;
+            cursor: pointer;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 650;
+            transition: background .2s ease, transform .2s ease;
+        }
+        .submit:hover { transform: translateY(-1px); background: #19382f; }
+        .back-link { display: inline-block; margin-top: 20px; color: #657168; font-size: 13px; text-decoration: none; }
+        @media (max-width: 720px) {
+            .page-shell { width: min(100% - 32px, 520px); }
+            main { min-height: auto; grid-template-columns: 1fr; gap: 30px; padding: 48px 0; }
+            .book-illustration { display: none; }
+            h1 { max-width: 430px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition-duration: .01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header>
+            <a class="brand" href="{% url 'home' %}">Biblioteca Aurora</a>
+            <a class="header-link" href="{% url 'lista_libros' %}">Volver al catálogo →</a>
+        </header>
+        <main>
+            <section class="intro">
+                <span class="eyebrow">La colección crece contigo</span>
+                <h1>Una nueva historia empieza aquí.</h1>
+                <p>Registra un libro en la biblioteca y estará disponible en el catálogo para que alguien lo descubra.</p>
+                <div class="book-illustration" aria-hidden="true">
+                    <div class="book-shape">Aurora</div>
+                </div>
+            </section>
+            <section class="form-card" aria-labelledby="form-title">
+                <h2 id="form-title">Registrar un libro</h2>
+                <p class="form-hint">Completa los datos para añadirlo a la colección.</p>
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="field">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+                            {% for error in field.errors %}
+                                <p class="error" role="alert">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    {% if form.non_field_errors %}
+                        {% for error in form.non_field_errors %}
+                            <p class="error" role="alert">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                    <button class="submit" type="submit">Guardar en la biblioteca <span aria-hidden="true">→</span></button>
+                </form>
+                <a class="back-link" href="{% url 'home' %}">← Volver al inicio</a>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

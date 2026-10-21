@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f8f7f2">
+    <title>Crear cuenta | Biblioteca Aurora</title>
+    <style>
+        :root { font-family: "Segoe UI", Arial, sans-serif; color: #202c28; background: #f8f7f2; }
+        * { box-sizing: border-box; }
+        body { display: grid; min-height: 100vh; margin: 0; padding: 24px; place-items: center; }
+        main { width: min(100%, 480px); padding: clamp(28px, 7vw, 48px); border: 1px solid #e7e5dc; border-radius: 16px; background: #fff; box-shadow: 0 18px 50px #1720330b; }
+        .brand { color: #24483d; font-family: Georgia, "Times New Roman", serif; font-size: 18px; font-weight: 700; text-decoration: none; }
+        .eyebrow { margin: 34px 0 10px; color: #9b6548; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+        h1 { margin: 0; color: #203b32; font-family: Georgia, "Times New Roman", serif; font-size: 38px; font-weight: 500; }
+        .intro { margin: 10px 0 25px; color: #747b73; font-size: 14px; line-height: 1.7; }
+        .field { margin-top: 18px; }
+        label { display: block; margin-bottom: 7px; color: #34473d; font-size: 13px; font-weight: 650; }
+        input { width: 100%; min-height: 47px; padding: 0 12px; border: 1px solid #d9ded7; border-radius: 7px; background: #fdfdfb; color: #202c28; font: inherit; font-size: 14px; }
+        input:focus { border-color: #668576; outline: 3px solid #24483d18; }
+        .help { margin: 7px 0 0; color: #858b83; font-size: 12px; line-height: 1.6; }
+        .error { margin: 7px 0 0; color: #a13c36; font-size: 12px; }
+        .submit { width: 100%; min-height: 48px; margin-top: 25px; border: 0; border-radius: 7px; background: #24483d; color: #fff; cursor: pointer; font: inherit; font-size: 14px; font-weight: 650; }
+        .submit:hover { background: #19382f; }
+        .switch { margin: 22px 0 0; color: #747b73; font-size: 13px; text-align: center; }
+        .switch a, .back { color: #24483d; font-weight: 600; }
+        .back { display: block; margin-top: 22px; font-size: 13px; text-align: center; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <main>
+        <a class="brand" href="{% url 'home' %}">Biblioteca Aurora</a>
+        <p class="eyebrow">Forma parte de la comunidad</p>
+        <h1>Crear cuenta</h1>
+        <p class="intro">Crea tu usuario para registrar nuevos libros en la colección.</p>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="field">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<p class="help">{{ field.help_text|safe }}</p>{% endif %}
+                    {% for error in field.errors %}
+                        <p class="error" role="alert">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <p class="error" role="alert">{{ error }}</p>
+                {% endfor %}
+            {% endif %}
+            <button class="submit" type="submit">Crear cuenta y continuar</button>
+        </form>
+        <p class="switch">¿Ya tienes cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
+        <a class="back" href="{% url 'home' %}">← Volver al inicio</a>
+    </main>
+</body>
+</html>

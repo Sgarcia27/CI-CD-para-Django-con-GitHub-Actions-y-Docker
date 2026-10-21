@@ -1,0 +1,12 @@
+# Framework web; incluye autenticacion, formularios y sesiones.
+Django==5.2.18
+# Adaptador de PostgreSQL usado por Django.
+psycopg2-binary==2.9.12
+# Procesamiento y validacion de portadas de libros.
+Pillow==12.3.0
+# Filtros del catálogo por texto y disponibilidad.
+django-filter==26.2
+# Servir archivos estáticos en producción.
+whitenoise==6.12.0
+# Servidor WSGI para despliegues Linux/Unix.
+gunicorn==23.0.0

@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Libros | Gestion</title>
+    <style>
+        :root {
+            font-family: "Segoe UI", sans-serif;
+            color: #172033;
+            background: #f3f6fb;
+        }
+        body { margin: 0; padding: 3rem 1rem; }
+        main {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 2rem;
+            border: 1px solid #e1e7f0;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 18px 50px #17203312;
+        }
+        h1 { margin: 0; color: #203b32; font-family: Georgia, "Times New Roman", serif; font-size: 2.2rem; }
+        .page-heading { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+        .filters { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(140px, .6fr) auto auto; align-items: end; gap: .75rem; margin: 0 0 1.5rem; padding: 1rem; border-radius: 10px; background: #f5f7f4; }
+        .filter-field label { display: block; margin-bottom: .4rem; color: #526078; font-size: .82rem; }
+        .filter-field input, .filter-field select { box-sizing: border-box; width: 100%; min-height: 40px; padding: .5rem .65rem; border: 1px solid #d9e0d8; border-radius: 6px; background: white; font: inherit; }
+        .filter-submit { min-height: 40px; }
+        .clear-filter { padding: .65rem .5rem; color: #24483d; font-size: .9rem; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: .85rem .5rem; border-bottom: 1px solid #e7ebf2; }
+        button, .register-link, .account-button {
+            padding: .5rem .8rem;
+            border: 0;
+            border-radius: 6px;
+            color: white;
+            background: #2459c4;
+            cursor: pointer;
+        }
+        .register-link { display: inline-block; padding: .75rem 1rem; background: #24483d; text-decoration: none; white-space: nowrap; }
+        .account-button { display: inline-block; padding: .75rem 1rem; background: #24483d; text-decoration: none; white-space: nowrap; }
+        .account-links { display: flex; align-items: center; gap: 10px; }
+        .account-links form { margin: 0; }
+        .unavailable { color: #a13c36; }
+        .back { display: inline-block; margin-top: 1.5rem; color: #24483d; }
+        .message { margin: 0 0 1.25rem; padding: .85rem 1rem; border-radius: 8px; color: #24483d; background: #e9f3eb; }
+        .cover { display: block; width: 48px; height: 64px; border-radius: 4px; object-fit: cover; }
+        .no-cover { color: #858b83; font-size: .85rem; }
+        @media (max-width: 560px) {
+            main { padding: 1.25rem; overflow-x: auto; }
+            table { min-width: 560px; }
+            .page-heading { align-items: flex-start; flex-direction: column; }
+            .filters { min-width: 500px; grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="page-heading">
+            <h1>Catálogo de libros</h1>
+            <div class="account-links">
+                {% if user.is_authenticated %}
+                    <a class="register-link" href="{% url 'registrar_libro' %}">+ Registrar libro</a>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Cerrar sesión</button>
+                    </form>
+                {% else %}
+                    <a class="account-button" href="{% url 'login' %}">Iniciar sesión</a>
+                {% endif %}
+            </div>
+        </div>
+        {% for message in messages %}
+            <p class="message" role="status">{{ message }}</p>
+        {% endfor %}
+        <form class="filters" method="get">
+            <div class="filter-field">
+                <label for="{{ filtro.form.q.id_for_label }}">{{ filtro.form.q.label }}</label>
+                {{ filtro.form.q }}
+            </div>
+            <div class="filter-field">
+                <label for="{{ filtro.form.disponible.id_for_label }}">{{ filtro.form.disponible.label }}</label>
+                {{ filtro.form.disponible }}
+            </div>
+            <button class="filter-submit" type="submit">Buscar</button>
+            <a class="clear-filter" href="{% url 'lista_libros' %}">Limpiar</a>
+        </form>
+        {% if libros %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Portada</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for libro in libros %}
+                        <tr>
+                            <td>
+                                {% if libro.portada %}
+                                    <img class="cover" src="{{ libro.portada.url }}" alt="Portada de {{ libro.titulo }}">
+                                {% else %}
+                                    <span class="no-cover">Sin portada</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ libro.titulo }}</td>
+                            <td>{{ libro.autor }}</td>
+                            <td>
+                                {% if libro.disponible %}
+                                    Disponible
+                                {% else %}
+                                    <span class="unavailable">Prestado</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if libro.disponible %}
+                                    <form method="post" action="{% url 'prestar_libro' libro.id %}">
+                                        {% csrf_token %}
+                                        <button type="submit">Marcar como prestado</button>
+                                    </form>
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aún no hay libros registrados. ¡Añade el primero a la colección!</p>
+            <a class="register-link" href="{% url 'registrar_libro' %}">Registrar el primer libro</a>
+        {% endif %}
+        <a class="back" href="{% url 'home' %}">Volver al inicio</a>
+    </main>
+</body>
+</html>
